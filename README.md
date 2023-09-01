@@ -1,6 +1,6 @@
 # Weather App by Davitt Barry
 
-Welcome to my Weather App project! This app is built using React, MongoDB, and various APIs to provide a comprehensive weather dashboard. You can learn more about my work by visiting my [LinkedIn profile](https://www.linkedin.com/in/davittbarry/) or exploring my [Portfolio Page](https://davittportfolio.com/fi/).
+Welcome to my Weather App project! This app is built using React, MongoDB, and various APIs to provide a comprehensive weather dashboard. You can learn more about my work by visiting my [LinkedIn profile](https://www.linkedin.com/in/davittbarry/) or exploring my [Portfolio Page](https://davittportfolio.com/).
 
 ## Features
 
