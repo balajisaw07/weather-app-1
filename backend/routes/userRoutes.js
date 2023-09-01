@@ -62,8 +62,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.get('/dashboard', auth, (req, res) => {
-    res.json({ message: 'This is a protected route', user: req.user });
+router.get('/dashboard', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+
+        res.json({
+            message: 'This is a protected route',
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+            },
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 module.exports = router;

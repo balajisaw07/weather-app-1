@@ -3,45 +3,25 @@ import axios from 'axios';
 
 function Dashboard() {
     const [userData, setUserData] = useState({});
-    const [updating, setUpdating] = useState(false);
-
-    useEffect(() => {
-        fetchUserData();
-    }, []);
 
     const fetchUserData = async () => {
         try {
             const res = await axios.get('http://localhost:3000/user/dashboard', {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'x-auth-token': localStorage.getItem('token'),
                 },
             });
+            console.log('API Response:', res.data); // Log the API response
             setUserData(res.data.user);
+            console.log('Updated State:', userData); // Log the updated state
         } catch (err) {
             console.error(err.response.data);
         }
     };
 
-    const handleUpdateProfile = async (updatedData) => {
-        setUpdating(true);
-        try {
-            await axios.put(
-                'http://localhost:3000/user/update-profile',
-                updatedData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json',
-                    },
-                },
-            );
-            await fetchUserData();
-            setUpdating(false);
-        } catch (err) {
-            console.error(err.response.data);
-            setUpdating(false);
-        }
-    };
+    useEffect(() => {
+        fetchUserData();
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -70,7 +50,7 @@ function Dashboard() {
                     {userData.email}
                 </p>
             </div>
-            <button onClick={handleLogout}>Logout</button>
+            <button type="button" onClick={handleLogout}>Logout</button>
         </div>
     );
 }

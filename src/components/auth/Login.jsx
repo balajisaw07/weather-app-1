@@ -35,7 +35,9 @@ function Login() {
             const body = JSON.stringify(user);
             const res = await axios.post('http://localhost:3000/user/login', body, config);
 
-            console.log(res.data);
+            // Store the JWT token in local storage
+            localStorage.setItem('token', res.data.token);
+
             navigate('/dashboard');
         } catch (err) {
             setError(err.response.data.message);
