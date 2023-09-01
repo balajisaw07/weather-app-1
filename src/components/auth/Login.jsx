@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         username: '',
         password: '',
     });
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const { username, password } = formData;
 
@@ -14,10 +20,13 @@ function Login() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
         const user = {
             username,
             password,
         };
+
         try {
             const config = {
                 headers: {
@@ -26,9 +35,13 @@ function Login() {
             };
             const body = JSON.stringify(user);
             const res = await axios.post('http://localhost:5000/login', body, config);
+
             console.log(res.data);
+            navigate('/dashboard');
         } catch (err) {
-            console.error(err.response.data);
+            setError(err.response.data.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -56,7 +69,10 @@ function Login() {
                         required
                     />
                 </div>
-                <input type="submit" value="Login" />
+                {error && <p className="error-message">{error}</p>}
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Logging in...' : 'Login'}
+                </button>
             </form>
         </div>
     );

@@ -1,13 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './components/auth/Register';
 
 function AppRouter() {
   return (
     <Router>
-      <Switch>
-        <Route path="/register" component={Register} />
-      </Switch>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+      </Routes>
     </Router>
   );
 }

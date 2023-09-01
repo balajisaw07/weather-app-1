@@ -28,10 +28,11 @@ function Register() {
       };
       const body = JSON.stringify(newUser);
       const res = await axios.post(
-        'http://localhost:5000/register',
+        'http://localhost:5000/user/register',
         body,
         config,
       );
+
       console.log(res.data);
     } catch (err) {
       console.error(err.response.data);

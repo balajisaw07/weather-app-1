@@ -23,7 +23,7 @@ This project was initialized with [Create React App](https://github.com/facebook
 1. Clone the repository:
 
    ```bash
-   git clone hhttps://github.com/DavittBarry/weather-app.git
+   git clone https://github.com/DavittBarry/weather-app.git
    ```
 
 2. Navigate into the project directory:
@@ -33,7 +33,6 @@ This project was initialized with [Create React App](https://github.com/facebook
    ```
 
 3. Install the dependencies:
-
    ```bash
    npm install
    ```
@@ -42,7 +41,15 @@ This project was initialized with [Create React App](https://github.com/facebook
 
 #### `npm start`
 
-Run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload if you make edits.
+Run the front-end app in development mode on port 4000. Open [http://localhost:4000](http://localhost:4000) to view it in your browser. The page will reload if you make edits.
+
+#### `npm run start-backend`
+
+Run the back-end app in development mode. By default, it will run on port 3000 (or the port specified in `backend/app.js`).
+
+#### `npm run start-all`
+
+Run both the front-end and back-end apps concurrently in development mode. This will run the front-end on port 4000 and the back-end on port 3000.
 
 #### `npm test`
 
@@ -58,7 +65,7 @@ For instructions on how to deploy the built application, please refer to the [Cr
 
 ## Support
 
-If you have any questions or run into issues, feel free to reach out on [LinkedIn](https://www.linkedin.com/in/davittbarry/) or through my [Portfolio Page](https://davittportfolio.com/fi/).
+If you have any questions or run into issues, feel free to reach out on [LinkedIn](https://www.linkedin.com/in/davittbarry/) or through my [Portfolio Page](https://davittportfolio.com/).
 
 ## License
 
