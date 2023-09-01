@@ -15,8 +15,7 @@ function Login() {
 
     const { username, password } = formData;
 
-    const onChange = (e) =>
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +33,7 @@ function Login() {
                 },
             };
             const body = JSON.stringify(user);
-            const res = await axios.post('http://localhost:5000/login', body, config);
+            const res = await axios.post('http://localhost:3000/user/login', body, config);
 
             console.log(res.data);
             navigate('/dashboard');

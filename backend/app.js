@@ -15,12 +15,12 @@ app.use(express.json());
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.log(err));
+    .connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => console.log(err));
 
 // Use routes
 app.use('/', indexRoutes);
@@ -29,5 +29,5 @@ app.use('/user', userRoutes);
 const PORT = 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
