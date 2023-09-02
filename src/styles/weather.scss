@@ -1,0 +1,44 @@
+@import 'variables.scss';
+
+.weather-container {
+  text-align: center;
+  margin: 0 auto;
+  width: 100%; 
+  font-size: 1.2rem;
+
+  .weather-card {
+    background-color: $weather-card-bg;
+    padding: 1.5rem;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: $common-text-color;
+    width: 100%; 
+
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: $common-text-color;
+    }
+  }
+
+  .forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .day-container {
+    background-color: $day-container-bg;
+    padding: 1rem;
+    border-radius: 0.6rem;
+    color: $common-text-color;
+
+    h3 {
+      font-size: 1.4rem;
+    }
+
+    .time {
+      font-size: 0.8rem;
+    }
+  }
+}
