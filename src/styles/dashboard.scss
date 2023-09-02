@@ -1,0 +1,77 @@
+@import 'variables.scss';
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: $day-group-bg;
+  border-radius: 1.2rem;
+  color: $common-text-color;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  max-width: 600px;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  select {
+    padding: 0.6rem;
+    border: 1px solid $day-container-bg;
+    border-radius: 0.4rem;
+    color: $common-text-color;
+    background-color: $day-container-bg;
+  }
+
+  button {
+    padding: 0.7rem 1.5rem;
+    background-color: $day-container-bg;
+    border: none;
+    border-radius: 0.4rem;
+    color: $common-text-color;
+    cursor: pointer;
+    margin-top: 1rem; 
+
+    &:hover {
+      background-color: lighten($day-container-bg, 10%);
+    }
+  }
+
+  // Media Queries for Responsiveness
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 1rem;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    select {
+      padding: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+    }
+  }
+}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/dashboard.scss';
 
 function Dashboard() {
     const [userData, setUserData] = useState({});
+    const [selectedCity, setSelectedCity] = useState('');
 
     const fetchUserData = async () => {
         try {
@@ -11,9 +13,7 @@ function Dashboard() {
                     'x-auth-token': localStorage.getItem('token'),
                 },
             });
-            console.log('API Response:', res.data); // Log the API response
             setUserData(res.data.user);
-            console.log('Updated State:', userData); // Log the updated state
         } catch (err) {
             console.error(err.response.data);
         }
@@ -28,8 +28,13 @@ function Dashboard() {
         window.location.href = '/login';
     };
 
+    const handleCityChange = (e) => {
+        setSelectedCity(e.target.value);
+        // Add logic here to update the default city for weather display
+    };
+
     return (
-        <div>
+        <div className="dashboard-container">
             <h1>User Dashboard</h1>
             <p>
                 Welcome,
@@ -50,6 +55,18 @@ function Dashboard() {
                     {userData.email}
                 </p>
             </div>
+            <div>
+                <h2>Weather Settings</h2>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                <label htmlFor="citySelect">Default City: </label>
+
+                <select id="citySelect" name="citySelect" onChange={handleCityChange} value={selectedCity}>
+                    <option value="London">London</option>
+                    <option value="New York">New York</option>
+                    <option value="Tokyo">Tokyo</option>
+                </select>
+            </div>
+
             <button type="button" onClick={handleLogout}>Logout</button>
         </div>
     );

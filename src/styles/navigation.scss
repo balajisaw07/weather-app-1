@@ -1,31 +1,68 @@
-@import 'variables.scss'; 
+@import 'variables.scss';
 
 .navigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $weather-card-bg; 
+  background-color: $weather-card-bg;
   padding: 1rem;
-  color: $common-text-color; 
+  color: $common-text-color;
+
   .logo {
-    h1 {
-      margin: 0;
-      font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    a {
+      color: $common-text-color;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      .logo-img {
+        height: 24px;
+        margin-right: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
     }
   }
 
   .login {
-    button {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+
+    .login-btn, .register-btn {
       padding: 0.5rem 1rem;
+      margin: 0.2rem 0.5rem;
       border: none;
       border-radius: 0.3rem;
-      background-color: $day-container-bg; 
-      color: $common-text-color; 
+      background-color: $day-group-bg;
+      color: $common-text-color;
       cursor: pointer;
 
       &:hover {
-        background-color: $weather-card-bg; 
+        background-color: lighten($day-container-bg, 10%);
       }
+    }
+  }
+
+  // For mobile devices
+  @media only screen and (max-width: 600px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo, .login {
+      flex-grow: 1;
+    }
+
+    h1 {
+      font-size: 1.2rem;
     }
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/login.scss';
 
 function Login() {
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ function Login() {
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h1>Login</h1>
             <form onSubmit={(e) => onSubmit(e)}>
                 <div>
