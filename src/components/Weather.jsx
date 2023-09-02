@@ -23,7 +23,7 @@ function Weather({ cityId }) {
 
     useEffect(() => {
         axios
-            .get(`http://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${apiKey}`)
+            .get(`https://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${apiKey}`)
             .then((response) => {
                 setWeather(response.data);
             })
