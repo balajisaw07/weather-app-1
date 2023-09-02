@@ -1,0 +1,31 @@
+@import 'variables.scss'; 
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $weather-card-bg; 
+  padding: 1rem;
+  color: $common-text-color; 
+  .logo {
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  }
+
+  .login {
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.3rem;
+      background-color: $day-container-bg; 
+      color: $common-text-color; 
+      cursor: pointer;
+
+      &:hover {
+        background-color: $weather-card-bg; 
+      }
+    }
+  }
+}

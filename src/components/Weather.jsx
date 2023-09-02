@@ -14,6 +14,13 @@ function Weather({ cityId }) {
         return days[date.getDay()];
     };
 
+    const groupForecastsByDay = (list) => list.reduce((acc, forecast) => {
+        const day = getDayOfWeek(new Date(forecast.dt * 1000));
+        if (!acc[day]) acc[day] = [];
+        acc[day].push(forecast);
+        return acc;
+    }, {});
+
     useEffect(() => {
         axios
             .get(`http://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${apiKey}`)
@@ -25,6 +32,8 @@ function Weather({ cityId }) {
             });
     }, [cityId, apiKey]);
 
+    const groupedByDay = weather ? groupForecastsByDay(weather.list) : null;
+
     return (
         <div className="weather-container">
             {weather ? (
@@ -35,41 +44,51 @@ function Weather({ cityId }) {
                         {weather.city.name}
                     </h2>
                     <div className="forecast-grid">
-                        {weather.list.map((forecast) => (
-                            <div className="day-container" key={forecast.dt}>
-                                <h3>{getDayOfWeek(new Date(forecast.dt * 1000))}</h3>
-                                <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
-                                <div>
-                                    Temperature:
+                        {Object.keys(groupedByDay).map((day, index) => (
+                            <div className={`day-group day-group-${index}`} key={day}>
+                                <div className="day-title">
+                                    {day}
                                     {' '}
-                                    {kelvinToCelsius(forecast.main.temp).toFixed(2)}
-                                    {' '}
-                                    &#8451;
+                                    (
+                                    {new Date(groupedByDay[day][0].dt * 1000).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+                                    )
                                 </div>
-                                <div>
-                                    Description:
-                                    {' '}
-                                    {forecast.weather[0].description}
-                                </div>
-                                <div>
-                                    Wind Speed:
-                                    {' '}
-                                    {forecast.wind.speed}
-                                    {' '}
-                                    m/s
-                                </div>
-                                <div>
-                                    Humidity:
-                                    {' '}
-                                    {forecast.main.humidity}
-                                    %
-                                </div>
+                                {groupedByDay[day].map((forecast) => (
+                                    <div className="day-container" key={forecast.dt}>
+                                        <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
+                                        <div>
+                                            Temperature:
+                                            {' '}
+                                            {kelvinToCelsius(forecast.main.temp).toFixed(2)}
+                                            {' '}
+                                            &#8451;
+                                        </div>
+                                        <div>
+                                            Description:
+                                            {' '}
+                                            {forecast.weather[0].description}
+                                        </div>
+                                        <div>
+                                            Wind Speed:
+                                            {' '}
+                                            {forecast.wind.speed}
+                                            {' '}
+                                            m/s
+                                        </div>
+                                        <div>
+                                            Humidity:
+                                            {' '}
+                                            {forecast.main.humidity}
+                                            %
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         ))}
                     </div>
                 </div>
             ) : (
-                <div>Loading...</div>
+                <div className="loading">Loading...</div>
             )}
         </div>
     );

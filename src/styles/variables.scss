@@ -1,5 +1,11 @@
+// Existing variables
 $primary-bg-color: #1E2E3E;
 $primary-text-color: #FFFFFF;
 $weather-card-bg: #2c3e50;
 $day-container-bg: #34495e;
 $common-text-color: #ecf0f1;
+
+// Variables for day group container
+$day-container-hover-bg: lighten($day-container-bg, 10%);
+$day-group-bg: lighten($day-container-bg, 5%);
+$day-group-border: 2px solid lighten($day-container-bg, 20%);

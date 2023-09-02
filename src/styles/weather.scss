@@ -6,6 +6,11 @@
   width: 100%; 
   font-size: 1.2rem;
 
+  .loading {
+    color: $common-text-color;
+    font-size: 1.5rem;
+  }
+
   .weather-card {
     background-color: $weather-card-bg;
     padding: 1.5rem;
@@ -27,18 +32,34 @@
     gap: 1rem;
   }
 
+  .day-group {
+    background-color: $day-group-bg;
+    border: $day-group-border;
+    border-radius: 0.8rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+    &:hover {
+      background-color: $day-container-hover-bg;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .day-title {
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+      color: $common-text-color;
+    }
+  }
+
   .day-container {
     background-color: $day-container-bg;
     padding: 1rem;
     border-radius: 0.6rem;
     color: $common-text-color;
-
-    h3 {
-      font-size: 1.4rem;
-    }
+    margin-bottom: 0.5rem;  
 
     .time {
-      font-size: 0.8rem;
+      font-size: 1rem;  
     }
   }
 }
