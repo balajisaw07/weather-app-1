@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const errorHandler = require('./middleware/errorMiddleware');
 
 dotenv.config();
 
@@ -30,6 +31,9 @@ app.get('/', (req, res) => {
 // Use routes
 app.use('/', indexRoutes);
 app.use('/user', userRoutes);
+
+// Error Handling Middleware
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

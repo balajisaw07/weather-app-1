@@ -1,0 +1,67 @@
+@import 'variables.scss';
+
+.error-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.error-modal-content {
+    background-color: $error-modal-bg;
+    color: $error-modal-text;
+    margin: 15% auto;
+    padding: 20px;
+    border: $error-modal-border;
+    box-shadow: $error-modal-shadow;
+    border-radius: 10px;
+    width: 30%;
+    text-align: center;
+    font-size: 1.2em;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    &:hover {
+        box-shadow: 0px 12px 24px 0px rgba(0,0,0,0.3);
+    }
+
+    // Tablet View
+    @media (max-width: 768px) {
+        width: 50%;
+        font-size: 1.1em;
+    }
+
+    // Mobile View
+    @media (max-width: 480px) {
+        width: 80%;
+        padding: 15px;
+        font-size: 1em;
+    }
+}
+
+.error-modal-close {
+    color: $error-modal-close-color;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: darken($error-modal-close-color, 20%);
+    }
+
+    // Mobile View
+    @media (max-width: 480px) {
+        font-size: 24px;
+    }
+}

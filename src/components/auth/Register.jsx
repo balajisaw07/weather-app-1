@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../../styles/register.scss';
+import { useNavigate } from 'react-router-dom';
+import ErrorModal from '../ErrorModal';
 
 function Register() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
         email: '',
     });
+    const [message, setMessage] = useState('');
 
     const { username, password, email } = formData;
 
@@ -27,28 +31,38 @@ function Register() {
                 },
             };
             const body = JSON.stringify(newUser);
-            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
-            const res = await axios.post(
-                `${backendUrl}/user/register`,
+            await axios.post(
+                `${process.env.REACT_APP_API_URL}/user/register`,
                 body,
                 config,
             );
-
-            console.log(res.data);
+            setMessage('Account successfully created');
+            setTimeout(() => {
+                navigate('/login');
+                setMessage('');
+            }, 4000);
         } catch (err) {
-            console.error(err.response.data);
+            setMessage(err.response.data.message);
         }
+    };
+
+    const clearMessage = () => {
+        setMessage('');
     };
 
     return (
         <div className="register-container">
             <h1>Register</h1>
+            {message && <ErrorModal message={message} onClose={clearMessage} />}
             <form onSubmit={(e) => onSubmit(e)}>
                 <div>
                     <input
                         type="text"
-                        placeholder="Username"
+                        placeholder="Username (3-16 alphanumeric characters)"
                         name="username"
+                        minLength="3"
+                        maxLength="16"
+                        pattern="[a-zA-Z0-9]+"
                         value={username}
                         onChange={(e) => onChange(e)}
                         required
@@ -57,8 +71,10 @@ function Register() {
                 <div>
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Password (Min. 8 characters, 1 number)"
                         name="password"
+                        minLength="8"
+                        pattern="(?=.*\d).+"
                         value={password}
                         onChange={(e) => onChange(e)}
                         required
@@ -69,8 +85,10 @@ function Register() {
                         type="email"
                         placeholder="Email"
                         name="email"
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                         value={email}
                         onChange={(e) => onChange(e)}
+                        required
                     />
                 </div>
                 <input type="submit" value="Register" />

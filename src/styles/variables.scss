@@ -9,3 +9,10 @@ $common-text-color: #ecf0f1;
 $day-container-hover-bg: lighten($day-container-bg, 10%);
 $day-group-bg: lighten($day-container-bg, 5%);
 $day-group-border: 2px solid lighten($day-container-bg, 20%);
+
+// Error modal variables
+$error-modal-bg: darken($primary-bg-color, 10%);
+$error-modal-text: lighten($primary-text-color, 10%);
+$error-modal-border: 2px solid lighten($primary-bg-color, 15%);
+$error-modal-close-color: #aaa;
+$error-modal-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
