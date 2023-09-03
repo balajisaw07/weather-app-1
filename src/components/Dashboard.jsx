@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/dashboard.scss';
+import { useDefaultCountry } from '../contexts/DefaultCountryContext';
 
 function Dashboard() {
+    const { defaultCountry, setDefaultCountry } = useDefaultCountry();
     const [userData, setUserData] = useState({});
     const [selectedCity, setSelectedCity] = useState('');
 
@@ -31,7 +33,10 @@ function Dashboard() {
 
     const handleCityChange = (e) => {
         setSelectedCity(e.target.value);
-        // Add logic here to update the default city for weather display
+    };
+
+    const handleCountryChange = (e) => {
+        setDefaultCountry(e.target.value);
     };
 
     return (
@@ -58,16 +63,23 @@ function Dashboard() {
             </div>
             <div>
                 <h2>Weather Settings</h2>
-                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                <label htmlFor="citySelect">Default City: </label>
-
-                <select id="citySelect" name="citySelect" onChange={handleCityChange} value={selectedCity}>
-                    <option value="London">London</option>
-                    <option value="New York">New York</option>
-                    <option value="Tokyo">Tokyo</option>
-                </select>
+                <label htmlFor="citySelect">
+                    Default City:
+                    <select id="citySelect" name="citySelect" onChange={handleCityChange} value={selectedCity}>
+                        <option value="London">London</option>
+                        <option value="New York">New York</option>
+                        <option value="Tokyo">Tokyo</option>
+                    </select>
+                </label>
+                <label htmlFor="countrySelect">
+                    Default Country:
+                    <select id="countrySelect" name="countrySelect" onChange={handleCountryChange} value={defaultCountry}>
+                        <option value="United States">United States</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="Japan">Japan</option>
+                    </select>
+                </label>
             </div>
-
             <button type="button" onClick={handleLogout}>Logout</button>
         </div>
     );

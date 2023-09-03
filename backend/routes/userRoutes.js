@@ -10,7 +10,6 @@ const auth = require('../middleware/auth');
 router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
@@ -27,7 +26,7 @@ router.post('/register', async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    return res.status(201).json({ message: 'User registered successfully' });
 });
 
 // User login
@@ -46,7 +45,6 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ msg: 'Invalid password' });
         }
 
-        /* eslint-disable no-underscore-dangle */
         const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
         return res.json({
             token,
@@ -54,9 +52,9 @@ router.post('/login', async (req, res) => {
                 id: user._id,
                 username: user.username,
                 email: user.email,
+                defaultCountry: user.defaultCountry,
             },
         });
-        /* eslint-enable no-underscore-dangle */
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
@@ -65,8 +63,7 @@ router.post('/login', async (req, res) => {
 router.get('/dashboard', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
-
-        res.json({
+        return res.json({
             message: 'This is a protected route',
             user: {
                 id: user._id,
@@ -76,7 +73,7 @@ router.get('/dashboard', auth, async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        return res.status(500).json({ error: 'Server error' });
     }
 });
 
