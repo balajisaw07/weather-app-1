@@ -22,6 +22,11 @@ mongoose
     .then(() => console.log('MongoDB connected'))
     .catch((err) => console.log(err));
 
+// Welcome message for root URL (you can move this to indexRoutes later)
+app.get('/', (req, res) => {
+    res.send('Welcome to my backend!');
+});
+
 // Use routes
 app.use('/', indexRoutes);
 app.use('/user', userRoutes);
