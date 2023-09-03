@@ -7,8 +7,9 @@ function Dashboard() {
     const [selectedCity, setSelectedCity] = useState('');
 
     const fetchUserData = async () => {
+        const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
-            const res = await axios.get('http://localhost:3000/user/dashboard', {
+            const res = await axios.get(`${backendUrl}/user/dashboard`, {
                 headers: {
                     'x-auth-token': localStorage.getItem('token'),
                 },

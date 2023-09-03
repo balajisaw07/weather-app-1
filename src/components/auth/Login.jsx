@@ -34,7 +34,8 @@ function Login() {
                 },
             };
             const body = JSON.stringify(user);
-            const res = await axios.post('http://localhost:3000/user/login', body, config);
+            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+            const res = await axios.post(`${backendUrl}/user/login`, body, config);
 
             // Store the JWT token in local storage
             localStorage.setItem('token', res.data.token);

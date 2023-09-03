@@ -27,8 +27,9 @@ function Register() {
                 },
             };
             const body = JSON.stringify(newUser);
+            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
             const res = await axios.post(
-                'http://localhost:3000/user/register',
+                `${backendUrl}/user/register`,
                 body,
                 config,
             );
