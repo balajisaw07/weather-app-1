@@ -4,7 +4,7 @@
   text-align: center;
   margin: 0 auto;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   font-size: 1.2rem;
 
   .loading {
@@ -54,15 +54,15 @@
     color: $common-text-color;
     margin-bottom: 0.5rem;
     display: flex;
-    flex-direction: column; /* Display vertically */
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 1rem;
-    text-align: center; /* Center text horizontally */
+    text-align: center;
 
     .time {
       font-size: 1rem;
-      white-space: nowrap; /* Prevent wrapping of text */
+      white-space: nowrap;
     }
   }
 

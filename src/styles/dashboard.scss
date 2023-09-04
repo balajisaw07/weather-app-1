@@ -27,12 +27,21 @@
     margin-bottom: 1rem;
   }
 
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
   select {
     padding: 0.6rem;
     border: 1px solid $day-container-bg;
     border-radius: 0.4rem;
     color: $common-text-color;
     background-color: $day-container-bg;
+    width:50%; 
   }
 
   button {
@@ -66,8 +75,13 @@
       font-size: 1rem;
     }
 
+    label {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
     select {
-      padding: 0.5rem;
+      margin-top: 0.5rem;
     }
 
     button {

@@ -57,10 +57,11 @@ function Weather({ cityId }) {
                                     if (index !== 0 && forecastIndex !== 0) {
                                         return null;
                                     }
-                                    const isCurrentDay = index === 0 && forecastIndex === 0;
                                     return (
-                                        <div className={`day-container${isCurrentDay ? ' current-day' : ''}`} key={forecast.dt}>
-                                            <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
+                                        <div className={`day-container${index === 0 ? ' current-day' : ''}`} key={forecast.dt}>
+                                            {index === 0 && (
+                                                <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
+                                            )}
                                             <div>
                                                 <strong>Temperature:</strong>
                                                 {' '}

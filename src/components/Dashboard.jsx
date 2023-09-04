@@ -80,7 +80,7 @@ function Dashboard() {
                     </select>
                 </label>
             </div>
-            <button type="button" onClick={handleLogout}>Logout</button>
+            <button type="button" className="register-btn" onClick={handleLogout}>Logout</button>
         </div>
     );
 }

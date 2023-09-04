@@ -25,20 +25,24 @@ function Login() {
             username,
             password,
         };
+
         try {
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             };
+
             const body = JSON.stringify(user);
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/user/login`,
                 body,
                 config,
             );
+
             localStorage.setItem('token', res.data.token);
-            navigate('/dashboard');
+            navigate('/dashboard', { replace: true });
+            window.location.reload();
         } catch (err) {
             setError(err.response.data.message);
         } finally {
