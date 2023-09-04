@@ -43,49 +43,55 @@ function Weather({ cityId }) {
                         {' '}
                         {weather.city.name}
                     </h2>
-                    <div className="forecast-grid">
-                        {Object.keys(groupedByDay).map((day, index) => (
-                            <div className={`day-group day-group-${index}`} key={day}>
-                                <div className="day-title">
-                                    {day}
-                                    {' '}
-                                    (
-                                    {new Date(groupedByDay[day][0].dt * 1000).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
-                                    )
-                                </div>
-                                {groupedByDay[day].map((forecast) => (
-                                    <div className="day-container" key={forecast.dt}>
-                                        <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
-                                        <div>
-                                            Temperature:
-                                            {' '}
-                                            {kelvinToCelsius(forecast.main.temp).toFixed(2)}
-                                            {' '}
-                                            &#8451;
-                                        </div>
-                                        <div>
-                                            Description:
-                                            {' '}
-                                            {forecast.weather[0].description}
-                                        </div>
-                                        <div>
-                                            Wind Speed:
-                                            {' '}
-                                            {forecast.wind.speed}
-                                            {' '}
-                                            m/s
-                                        </div>
-                                        <div>
-                                            Humidity:
-                                            {' '}
-                                            {forecast.main.humidity}
-                                            %
-                                        </div>
-                                    </div>
-                                ))}
+                    {Object.keys(groupedByDay).map((day, index) => (
+                        <div className={index === 0 ? 'hero-day-group' : 'day-group'} key={day}>
+                            <div className="day-title">
+                                {day}
+                                {' '}
+                                (
+                                {new Date(groupedByDay[day][0].dt * 1000).toLocaleDateString()}
+                                )
                             </div>
-                        ))}
-                    </div>
+                            <div className={index === 0 ? 'hero-day-container-wrapper' : ''}>
+                                {groupedByDay[day].map((forecast, forecastIndex) => {
+                                    if (index !== 0 && forecastIndex !== 0) {
+                                        return null;
+                                    }
+                                    const isCurrentDay = index === 0 && forecastIndex === 0;
+                                    return (
+                                        <div className={`day-container${isCurrentDay ? ' current-day' : ''}`} key={forecast.dt}>
+                                            <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
+                                            <div>
+                                                <strong>Temperature:</strong>
+                                                {' '}
+                                                {kelvinToCelsius(forecast.main.temp).toFixed(2)}
+                                                {' '}
+                                                &#8451;
+                                            </div>
+                                            <div>
+                                                <strong>Description:</strong>
+                                                {' '}
+                                                {forecast.weather[0].description}
+                                            </div>
+                                            <div>
+                                                <strong>Wind Speed:</strong>
+                                                {' '}
+                                                {forecast.wind.speed}
+                                                {' '}
+                                                m/s
+                                            </div>
+                                            <div>
+                                                <strong>Humidity:</strong>
+                                                {' '}
+                                                {forecast.main.humidity}
+                                                %
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <div className="loading">Loading...</div>

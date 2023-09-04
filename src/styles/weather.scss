@@ -4,6 +4,7 @@
   text-align: center;
   margin: 0 auto;
   width: 100%;
+  max-width: 800px;
   font-size: 1.2rem;
 
   .loading {
@@ -26,23 +27,8 @@
     }
   }
 
-  .forecast-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-
-    // For tablets
-    @media only screen and (min-width: 601px) and (max-width: 1024px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    // For mobile devices
-    @media only screen and (max-width: 600px) {
-      grid-template-columns: repeat(1, 1fr);
-    }
-  }
-
-  .day-group {
+  .day-group,
+  .hero-day-group {
     background-color: $day-group-bg;
     border: $day-group-border;
     border-radius: 0.8rem;
@@ -61,15 +47,68 @@
     }
   }
 
-  .day-container {
+  .day-container,
+  .hero-day-container {
     background-color: $day-container-bg;
-    padding: 1rem;
     border-radius: 0.6rem;
     color: $common-text-color;
     margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column; /* Display vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    padding: 1rem;
+    text-align: center; /* Center text horizontally */
 
     .time {
       font-size: 1rem;
+      white-space: nowrap; /* Prevent wrapping of text */
+    }
+  }
+
+  .hero-day-container-wrapper {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+
+    &::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $scrollbar-thumb-color;
+      border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $scrollbar-bg-color;
+    }
+
+    .scroll-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: $common-text-color;
+      color: $day-container-bg;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      z-index: 1;
+
+      &.left-scroll-button {
+        left: 0;
+      }
+
+      &.right-scroll-button {
+        right: 0;
+      }
+
+      &.hidden {
+        display: none;
+      }
     }
   }
 }
