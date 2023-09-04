@@ -53,38 +53,42 @@ function Weather({ cityId }) {
                                 )
                             </div>
                             <div className={index === 0 ? 'hero-day-container-wrapper' : ''}>
-                                {groupedByDay[day].map((forecast) => (
-                                    <div className={`day-container${index === 0 ? ' current-day' : ''}`} key={forecast.dt}>
-                                        {index === 0 && (
+                                {groupedByDay[day].map((forecast, forecastIndex) => {
+                                    if (index !== 0 && forecastIndex !== 0) {
+                                        return null;
+                                    }
+                                    const isCurrentDay = index === 0 && forecastIndex === 0;
+                                    return (
+                                        <div className={`day-container${isCurrentDay ? ' current-day' : ''}`} key={forecast.dt}>
                                             <div className="time">{new Date(forecast.dt * 1000).toLocaleTimeString()}</div>
-                                        )}
-                                        <div>
-                                            <strong>Temperature:</strong>
-                                            {' '}
-                                            {kelvinToCelsius(forecast.main.temp).toFixed(2)}
-                                            {' '}
-                                            &#8451;
+                                            <div>
+                                                <strong>Temperature:</strong>
+                                                {' '}
+                                                {kelvinToCelsius(forecast.main.temp).toFixed(2)}
+                                                {' '}
+                                                &#8451;
+                                            </div>
+                                            <div>
+                                                <strong>Description:</strong>
+                                                {' '}
+                                                {forecast.weather[0].description}
+                                            </div>
+                                            <div>
+                                                <strong>Wind Speed:</strong>
+                                                {' '}
+                                                {forecast.wind.speed}
+                                                {' '}
+                                                m/s
+                                            </div>
+                                            <div>
+                                                <strong>Humidity:</strong>
+                                                {' '}
+                                                {forecast.main.humidity}
+                                                %
+                                            </div>
                                         </div>
-                                        <div>
-                                            <strong>Description:</strong>
-                                            {' '}
-                                            {forecast.weather[0].description}
-                                        </div>
-                                        <div>
-                                            <strong>Wind Speed:</strong>
-                                            {' '}
-                                            {forecast.wind.speed}
-                                            {' '}
-                                            m/s
-                                        </div>
-                                        <div>
-                                            <strong>Humidity:</strong>
-                                            {' '}
-                                            {forecast.main.humidity}
-                                            %
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     ))}
