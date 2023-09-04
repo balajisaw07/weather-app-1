@@ -41,10 +41,11 @@ function Login() {
             );
 
             localStorage.setItem('token', res.data.token);
+            setLoading(false);
             navigate('/dashboard', { replace: true });
+            window.location.reload();
         } catch (err) {
             setError(err.response.data.message);
-        } finally {
             setLoading(false);
         }
     };
