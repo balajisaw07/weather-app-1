@@ -42,7 +42,6 @@ function Login() {
 
             localStorage.setItem('token', res.data.token);
             navigate('/dashboard', { replace: true });
-            window.location.reload();
         } catch (err) {
             setError(err.response.data.message);
         } finally {
