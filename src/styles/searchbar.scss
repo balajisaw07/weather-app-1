@@ -7,6 +7,24 @@
     border-radius: 20px;
     position: relative;
 
+    &.dashboard {
+        padding: 8px;
+        border-radius: 10px;
+
+        input {
+            width: 100%;
+            padding: 8px;
+        }
+
+        .search-results {
+            border-radius: 10px;
+
+            div {
+                padding: 8px;
+            }
+        }
+    }
+
     input {
         width: 60%;
         padding: 10px;

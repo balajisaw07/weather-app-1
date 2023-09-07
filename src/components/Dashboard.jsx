@@ -6,6 +6,7 @@ import SearchBar from './SearchBar';
 function Dashboard() {
     const [userData, setUserData] = useState({});
     // eslint-disable-next-line no-unused-vars
+    const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedCity, setSelectedCity] = useState(null);
     const [countries, setCountries] = useState([]);
 
@@ -53,9 +54,9 @@ function Dashboard() {
 
     const handleCityClick = (city) => {
         setSelectedCity({ lat: city.lat, lon: city.lon });
+        setSelectedLocation(city);
         setCountries([]);
     };
-
     const handleSave = async () => {
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         const payload = {
@@ -96,12 +97,20 @@ function Dashboard() {
             </div>
             <div>
                 <h2>Weather Settings</h2>
+                <p>Your default location:</p>
                 <SearchBar
                     onSearch={handleSearch}
                     countries={countries}
                     clearCountries={clearCountries}
                     setSelectedCity={handleCityClick}
+                    variant="dashboard"
                 />
+                {selectedLocation && (
+                    <div className="selected-location-card">
+                        <h4>Selected Location:</h4>
+                        <p>{`${selectedLocation.name}, ${selectedLocation.country}`}</p>
+                    </div>
+                )}
             </div>
             <button type="button" onClick={handleSave}>Save Settings</button>
             <button type="button" className="register-btn" onClick={handleLogout}>Logout</button>

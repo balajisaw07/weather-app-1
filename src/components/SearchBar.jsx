@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import '../styles/searchbar.scss';
 
 function SearchBar({
-    onSearch, countries, clearCountries, setSelectedCity,
+    onSearch, countries, clearCountries, setSelectedCity, variant,
 }) {
     const [search, setSearch] = useState('');
 
@@ -39,7 +39,7 @@ function SearchBar({
     };
 
     return (
-        <div className="searchbar-container">
+        <div className={`searchbar-container ${variant}`}>
             <input
                 type="text"
                 value={search}
@@ -65,6 +65,10 @@ function SearchBar({
     );
 }
 
+SearchBar.defaultProps = {
+    variant: '',
+};
+
 SearchBar.propTypes = {
     onSearch: PropTypes.func.isRequired,
     countries: PropTypes.arrayOf(
@@ -76,6 +80,7 @@ SearchBar.propTypes = {
     ).isRequired,
     clearCountries: PropTypes.func.isRequired,
     setSelectedCity: PropTypes.func.isRequired,
+    variant: PropTypes.string,
 };
 
 export default SearchBar;
