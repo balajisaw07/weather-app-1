@@ -3,7 +3,7 @@
 .weather-container {
   text-align: center;
   margin: 0 auto;
-  width: 100%;
+  width: 60%;
   max-width: 1000px;
   font-size: 1.2rem;
 
@@ -11,6 +11,11 @@
     color: $common-text-color;
     font-size: 1.5rem;
   }
+
+  .country-list {
+  position: absolute;
+  z-index: 1000;
+}
 
   .weather-card {
     background-color: $weather-card-bg;

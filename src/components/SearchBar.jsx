@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/searchbar.scss';
 
-function SearchBar({ onSearch, countries }) {
+function SearchBar({
+    onSearch, countries, clearCountries, setSelectedCity,
+}) {
     const [search, setSearch] = useState('');
 
     const debounce = (func, delay) => {
@@ -30,8 +32,10 @@ function SearchBar({ onSearch, countries }) {
         }
     };
 
-    const handleClick = (countryName) => {
-        onSearch(countryName);
+    const handleClick = (country) => {
+        setSelectedCity({ lat: country.lat, lon: country.lon });
+        setSearch('');
+        clearCountries();
     };
 
     return (
@@ -49,8 +53,8 @@ function SearchBar({ onSearch, countries }) {
                             key={`${country.lat},${country.lon}`}
                             role="button"
                             tabIndex={0}
-                            onClick={() => handleClick(country.name)}
-                            onKeyPress={() => handleClick(country.name)}
+                            onClick={() => handleClick(country)}
+                            onKeyPress={() => handleClick(country)}
                         >
                             {`${country.name}, ${country.country}${country.state ? `, ${country.state}` : ''}`}
                         </div>
@@ -70,6 +74,8 @@ SearchBar.propTypes = {
             lon: PropTypes.number.isRequired,
         }),
     ).isRequired,
+    clearCountries: PropTypes.func.isRequired,
+    setSelectedCity: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
