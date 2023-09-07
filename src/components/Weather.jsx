@@ -1,17 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/weather.scss';
-import PropTypes from 'prop-types';
+import SearchBar from './SearchBar';
 
-function Weather({ cityId }) {
+function Weather() {
     const apiKey = process.env.REACT_APP_API_KEY;
     const [weather, setWeather] = useState(null);
+    const [countries, setCountries] = useState([]);
+    const [selectedCity, setSelectedCity] = useState({ lat: 40.7128, lon: -74.0060 });
+
+    useEffect(() => {
+        setSelectedCity({ lat: 40.7128, lon: -74.0060 });
+    }, []);
 
     const kelvinToCelsius = (kelvin) => kelvin - 273.15;
 
     const getDayOfWeek = (date) => {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
+    };
+
+    const handleSearch = (searchTerm) => {
+        if (searchTerm.length > 2) {
+            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    setCountries(data);
+                })
+                .catch((error) => console.error(error));
+        } else {
+            setCountries([]);
+        }
+    };
+
+    const handleCityClick = (city) => {
+        setSelectedCity({ lat: city.lat, lon: city.lon });
+        setCountries([]);
     };
 
     const groupForecastsByDay = (list) => list.reduce((acc, forecast) => {
@@ -22,20 +47,36 @@ function Weather({ cityId }) {
     }, {});
 
     useEffect(() => {
-        axios
-            .get(`https://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${apiKey}`)
-            .then((response) => {
-                setWeather(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching weather data: ', error);
-            });
-    }, [cityId, apiKey]);
+        if (selectedCity) {
+            axios
+                .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${selectedCity.lat}&lon=${selectedCity.lon}&appid=${apiKey}`)
+                .then((response) => {
+                    setWeather(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching weather data: ', error.response ? error.response.data : error);
+                });
+        }
+    }, [selectedCity, apiKey]);
 
     const groupedByDay = weather ? groupForecastsByDay(weather.list) : null;
 
     return (
         <div className="weather-container">
+            <SearchBar onSearch={handleSearch} countries={countries} />
+            <div className="country-list">
+                {countries.map((country) => (
+                    <div
+                        key={`${country.lat},${country.lon}`}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleCityClick(country)}
+                        onKeyPress={() => handleCityClick(country)}
+                    >
+                        {`${country.name}, ${country.country}${country.state ? `, ${country.state}` : ''}`}
+                    </div>
+                ))}
+            </div>
             {weather ? (
                 <div className="weather-card">
                     <h2>
@@ -99,9 +140,5 @@ function Weather({ cityId }) {
         </div>
     );
 }
-
-Weather.propTypes = {
-    cityId: PropTypes.string.isRequired,
-};
 
 export default Weather;
