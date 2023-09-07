@@ -26,7 +26,7 @@ function Weather() {
 
     const handleSearch = (searchTerm) => {
         if (searchTerm.length > 2) {
-            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
+            fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(data);
