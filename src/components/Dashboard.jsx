@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/dashboard.scss';
-import { useDefaultCountry } from '../contexts/DefaultCountryContext';
+import SearchBar from './SearchBar';
 
 function Dashboard() {
-    const { defaultCountry, setDefaultCountry } = useDefaultCountry();
     const [userData, setUserData] = useState({});
-    const [selectedCity, setSelectedCity] = useState('');
+    // eslint-disable-next-line no-unused-vars
+    const [selectedCity, setSelectedCity] = useState(null);
+    const [countries, setCountries] = useState([]);
 
     const fetchUserData = async () => {
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
@@ -31,12 +32,44 @@ function Dashboard() {
         window.location.href = '/login';
     };
 
-    const handleCityChange = (e) => {
-        setSelectedCity(e.target.value);
+    const handleSearch = (searchTerm) => {
+        const apiKey = process.env.REACT_APP_API_KEY;
+
+        if (searchTerm.length > 2) {
+            fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setCountries(data);
+                })
+                .catch((error) => console.error(error));
+        } else {
+            setCountries([]);
+        }
     };
 
-    const handleCountryChange = (e) => {
-        setDefaultCountry(e.target.value);
+    const clearCountries = () => {
+        setCountries([]);
+    };
+
+    const handleCityClick = (city) => {
+        setSelectedCity({ lat: city.lat, lon: city.lon });
+        setCountries([]);
+    };
+
+    const handleSave = async () => {
+        const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+        const payload = {
+            selectedCity,
+        };
+        try {
+            await axios.put(`${backendUrl}/user/update-profile`, payload, {
+                headers: {
+                    'x-auth-token': localStorage.getItem('token'),
+                },
+            });
+        } catch (err) {
+            console.error('Failed to save settings', err);
+        }
     };
 
     return (
@@ -63,23 +96,14 @@ function Dashboard() {
             </div>
             <div>
                 <h2>Weather Settings</h2>
-                <label htmlFor="citySelect">
-                    Default City:
-                    <select id="citySelect" name="citySelect" onChange={handleCityChange} value={selectedCity}>
-                        <option value="London">London</option>
-                        <option value="New York">New York</option>
-                        <option value="Tokyo">Tokyo</option>
-                    </select>
-                </label>
-                <label htmlFor="countrySelect">
-                    Default Country:
-                    <select id="countrySelect" name="countrySelect" onChange={handleCountryChange} value={defaultCountry}>
-                        <option value="United States">United States</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="Japan">Japan</option>
-                    </select>
-                </label>
+                <SearchBar
+                    onSearch={handleSearch}
+                    countries={countries}
+                    clearCountries={clearCountries}
+                    setSelectedCity={handleCityClick}
+                />
             </div>
+            <button type="button" onClick={handleSave}>Save Settings</button>
             <button type="button" className="register-btn" onClick={handleLogout}>Logout</button>
         </div>
     );
