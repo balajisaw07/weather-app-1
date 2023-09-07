@@ -1,0 +1,43 @@
+@import 'variables.scss';
+
+.searchbar-container {
+    background-color: $primary-bg-color;
+    color: $primary-text-color;
+    padding: 10px;
+    border-radius: 20px;
+    position: relative;
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: lighten($day-group-bg, 10%);
+        color: $primary-text-color;
+
+        &::placeholder {
+            color: darken($primary-text-color, 30%);
+        }
+    }
+
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        border-radius: 20px;
+        z-index: 2;
+
+        div {
+            padding: 10px;
+            border: 0.2px solid white;
+            background-color: darken($primary-bg-color, 5%);
+            border-radius: 20px;
+            cursor: pointer;
+            &:hover {
+                background-color: $day-container-hover-bg;
+                border-radius: 20px;
+            }
+        }
+    }
+}
