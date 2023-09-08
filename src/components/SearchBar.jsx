@@ -33,7 +33,12 @@ function SearchBar({
     };
 
     const handleClick = (country) => {
-        setSelectedCity({ lat: country.lat, lon: country.lon });
+        setSelectedCity({
+            name: country.name,
+            country: country.country,
+            lat: country.lat,
+            lon: country.lon,
+        });
         setSearch('');
         clearCountries();
     };
