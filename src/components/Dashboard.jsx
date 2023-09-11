@@ -11,8 +11,9 @@ function Dashboard() {
     const [countries, setCountries] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [, setSearchTerm] = useState('');
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+    const [saveModalMessage, setSaveModalMessage] = useState(null);
 
     const fetchUserData = async () => {
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
@@ -74,35 +75,56 @@ function Dashboard() {
         });
     };
 
-    const handleSave = () => {
-        if (
-            !selectedCity
-            || (userData.settings && selectedCity.name === userData.settings.defaultLocation)
-        ) {
+    const handleSave = async () => {
+        if (!selectedCity
+            || (userData.settings
+                && selectedCity.name
+                === userData.settings.defaultLocation)) {
             setShowModal(true);
-            setTimeout(() => setShowModal(false), 3000);
-        } else {
+            setSaveModalMessage('No changes made.');
+            setTimeout(() => { setShowModal(false); setSaveModalMessage(null); }, 3000);
+            return;
+        }
+
+        if (userData.settings && userData.settings.defaultLocation) {
             setShowConfirmationModal(true);
+        } else {
+            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+            const payload = { selectedCity };
+            try {
+                await axios.put(`${backendUrl}/user/update-profile`, payload, {
+                    headers: {
+                        'x-auth-token': localStorage.getItem('token'),
+                    },
+                });
+                fetchUserData();
+                setShowModal(true);
+                setTimeout(() => setShowModal(false), 3000);
+            } catch (err) {
+                console.error('Failed to save settings', err);
+            }
         }
     };
 
     const handleConfirmedSave = async () => {
         setShowConfirmationModal(false);
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
-        const payload = {
-            selectedCity,
-        };
+        const payload = { selectedCity };
+
         try {
             await axios.put(`${backendUrl}/user/update-profile`, payload, {
                 headers: {
                     'x-auth-token': localStorage.getItem('token'),
                 },
             });
+            fetchUserData();
             setShowModal(true);
             setTimeout(() => setShowModal(false), 3000);
         } catch (err) {
             console.error('Failed to save settings', err);
         }
+        setSaveModalMessage('Default location updated!');
+        setTimeout(() => setSaveModalMessage(null), 3000);
     };
 
     const handleCancel = () => {
@@ -126,6 +148,7 @@ function Dashboard() {
                 },
             });
             setSelectedCity(null);
+            fetchUserData();
         } catch (err) {
             console.error('Failed to remove default location', err);
         }
@@ -136,16 +159,16 @@ function Dashboard() {
     };
 
     const getModalMessage = () => {
-        if (!selectedCity && (!userData.settings || !userData.settings.defaultLocation)) {
-            return 'No changes made.';
+        if (showConfirmationModal) {
+            return 'Do you want to overwrite your default location?';
         }
-        if (userData.settings && userData.settings.defaultLocation) {
-            if (selectedCity && selectedCity.name === userData.settings.defaultLocation) {
-                return 'No changes to be made';
-            }
-            return 'Default location updated successfully!';
+        if (saveModalMessage) {
+            return saveModalMessage;
         }
-        return `Default location set as ${selectedCity ? selectedCity.name : searchTerm}`;
+        if (userData.settings && userData.settings.defaultLocation && !saveModalMessage) {
+            return 'Default location selected!';
+        }
+        return 'Default location selected!';
     };
 
     return (
@@ -153,19 +176,21 @@ function Dashboard() {
             <h1>User Dashboard</h1>
             <p>
                 Welcome,
-                {' '}
-                {userData.username}
-                !
+                <strong>
+                    {' '}
+                    {userData.username}
+                    !
+                </strong>
             </p>
             <div>
                 <h2>Profile Information</h2>
                 <p>
-                    Username:
+                    <strong>Username:</strong>
                     {' '}
                     {userData.username}
                 </p>
                 <p>
-                    Email:
+                    <strong>Email:</strong>
                     {' '}
                     {userData.email}
                 </p>
