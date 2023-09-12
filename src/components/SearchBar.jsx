@@ -33,8 +33,13 @@ function SearchBar({
     };
 
     const handleClick = (country) => {
+        let descriptiveName = country.name;
+        if (country.name === 'Helsinki') {
+            descriptiveName = country.lat > 60.2 ? 'Northern Helsinki' : 'Southern Helsinki';
+        }
+
         setSelectedCity({
-            name: country.name,
+            name: descriptiveName,
             country: country.country,
             lat: country.lat,
             lon: country.lon,
@@ -53,19 +58,26 @@ function SearchBar({
             />
             {countries && (
                 <div className="search-results">
-                    {countries.map((country) => (
-                        <div
-                            key={`${country.lat},${country.lon}`}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => handleClick(country)}
-                            onKeyPress={() => handleClick(country)}
-                        >
-                            {`${country.name}, ${country.country}${country.state ? `, ${country.state}` : ''}`}
-                        </div>
-                    ))}
+                    {countries.map((country) => {
+                        let descriptiveName = country.name;
+                        if (country.name === 'Helsinki') {
+                            descriptiveName = country.lat > 60.2 ? 'Northern Helsinki' : 'Southern Helsinki';
+                        }
+                        return (
+                            <div
+                                key={`${country.lat},${country.lon}`}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => handleClick(country)}
+                                onKeyPress={() => handleClick(country)}
+                            >
+                                {`${descriptiveName}, ${country.country}`}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
+
         </div>
     );
 }
