@@ -153,6 +153,7 @@ function Weather({ selectedCity }) {
                                     {dayGroup.map((forecast, forecastIndex) => {
                                         const isCurrentDay = isHeroDay && forecastIndex === 0;
                                         const forecastDate = new Date(forecast.dt * 1000);
+
                                         const timeString = forecastDate.toLocaleTimeString();
                                         const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
                                         return (
