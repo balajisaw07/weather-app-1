@@ -12,6 +12,13 @@ function Weather({ selectedCity }) {
     const { userData } = useContext(UserDataContext);
     const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
 
+    const countryCodeToFlag = (countryCode) => {
+        const offset = 127397;
+        return countryCode
+            .toUpperCase()
+            .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + offset));
+    };
+
     const fetchLatLon = (cityName, countryCode) => new Promise((resolve, reject) => {
         axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&appid=${apiKey}`)
             .then((response) => {
@@ -121,6 +128,8 @@ function Weather({ selectedCity }) {
                         ,
                         {' '}
                         {weather.city.country}
+                        {' '}
+                        {countryCodeToFlag(weather.city.country)}
                     </h2>
                     {Object.keys(groupedByDay).map((day, index) => {
                         const isHeroDay = index === 0;
