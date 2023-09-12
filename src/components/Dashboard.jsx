@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import '../styles/dashboard.scss';
 import '../styles/confirmationmodal.scss';
 import SearchBar from './SearchBar';
 import ErrorModal from './ErrorModal';
+import { UserDataContext } from '../contexts/UserDataContext';
 
 function Dashboard() {
-    const [userData, setUserData] = useState({});
+    const { userData, fetchUserData } = useContext(UserDataContext);
     const [selectedCity, setSelectedCity] = useState(null);
     const [countries, setCountries] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -16,6 +17,10 @@ function Dashboard() {
     const [saveModalMessage, setSaveModalMessage] = useState(null);
 
     useEffect(() => {
+        fetchUserData();
+    }, []);
+
+    useEffect(() => {
         if (userData && userData.settings && userData.settings.defaultLocation) {
             setSelectedCity({
                 name: userData.settings.defaultLocation,
@@ -23,37 +28,6 @@ function Dashboard() {
             });
         }
     }, [userData]);
-
-    const fetchUserData = async () => {
-        const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
-        try {
-            const res = await axios.get(`${backendUrl}/user/dashboard`, {
-                headers: {
-                    'x-auth-token': localStorage.getItem('token'),
-                },
-            });
-
-            console.log('Response from backend:', res.data);
-
-            setUserData(res.data.user);
-            if (res.data.user.settings && res.data.user.settings.defaultLocation) {
-                setSelectedCity({
-                    name: res.data.user.settings.defaultLocation,
-                    country: res.data.user.settings.defaultCountry,
-                });
-                console.log('Dashboard updated selectedCity:', {
-                    name: res.data.user.settings.defaultLocation,
-                    country: res.data.user.settings.defaultCountry,
-                });
-            }
-        } catch (err) {
-            console.error(err.response.data);
-        }
-    };
-
-    useEffect(() => {
-        fetchUserData();
-    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -139,6 +113,7 @@ function Dashboard() {
         } catch (err) {
             console.error('Failed to save settings', err);
         }
+
         setSaveModalMessage('Default location updated!');
         setTimeout(() => setSaveModalMessage(null), 3000);
     };
@@ -194,7 +169,7 @@ function Dashboard() {
                 Welcome,
                 <strong>
                     {' '}
-                    {userData.username}
+                    {userData ? userData.username : 'Guest'}
                     !
                 </strong>
             </p>
@@ -203,12 +178,12 @@ function Dashboard() {
                 <p>
                     <strong>Username:</strong>
                     {' '}
-                    {userData.username}
+                    {userData ? userData.username : 'Guest'}
                 </p>
                 <p>
                     <strong>Email:</strong>
                     {' '}
-                    {userData.email}
+                    {userData ? userData.email : 'N/A'}
                 </p>
             </div>
             <div>

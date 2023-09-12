@@ -44,8 +44,10 @@ function Weather({ selectedCity }) {
                 .catch((error) => {
                     console.error('Failed to fetch lat and lon:', error);
                 });
+        } else {
+            setCurrentCity(selectedCity || { lat: 40.7128, lon: -74.0060 });
         }
-    }, [userData]);
+    }, [userData, selectedCity]);
 
     console.log('Weather selectedCity:', selectedCity);
 
