@@ -15,6 +15,15 @@ function Dashboard() {
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
     const [saveModalMessage, setSaveModalMessage] = useState(null);
 
+    useEffect(() => {
+        if (userData && userData.settings && userData.settings.defaultLocation) {
+            setSelectedCity({
+                name: userData.settings.defaultLocation,
+                country: userData.settings.defaultCountry,
+            });
+        }
+    }, [userData]);
+
     const fetchUserData = async () => {
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
@@ -23,9 +32,16 @@ function Dashboard() {
                     'x-auth-token': localStorage.getItem('token'),
                 },
             });
+
+            console.log('Response from backend:', res.data);
+
             setUserData(res.data.user);
             if (res.data.user.settings && res.data.user.settings.defaultLocation) {
                 setSelectedCity({
+                    name: res.data.user.settings.defaultLocation,
+                    country: res.data.user.settings.defaultCountry,
+                });
+                console.log('Dashboard updated selectedCity:', {
                     name: res.data.user.settings.defaultLocation,
                     country: res.data.user.settings.defaultCountry,
                 });
