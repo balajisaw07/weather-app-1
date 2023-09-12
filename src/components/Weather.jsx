@@ -14,9 +14,7 @@ function Weather({ selectedCity }) {
 
     const countryCodeToFlag = (countryCode) => {
         const offset = 127397;
-        return countryCode
-            .toUpperCase()
-            .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + offset));
+        return countryCode.toUpperCase().replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + offset));
     };
 
     const fetchLatLon = (cityName, countryCode) => new Promise((resolve, reject) => {
@@ -156,13 +154,16 @@ function Weather({ selectedCity }) {
                                         const isCurrentDay = isHeroDay && forecastIndex === 0;
                                         const forecastDate = new Date(forecast.dt * 1000);
                                         const timeString = forecastDate.toLocaleTimeString();
+                                        const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
                                         return (
                                             <div className={`day-container${isCurrentDay ? ' current-day' : ''}`} key={forecast.dt}>
-                                                {isHeroDay && (
-                                                    <div className="time">
-                                                        {timeString}
-                                                    </div>
-                                                )}
+                                                <div className="time">
+                                                    {timeString}
+                                                    <img
+                                                        src={weatherIconUrl}
+                                                        alt={forecast.weather[0].description}
+                                                    />
+                                                </div>
                                                 <div>
                                                     <strong>Temperature:</strong>
                                                     {' '}

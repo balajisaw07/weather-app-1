@@ -12,6 +12,13 @@ function Footer() {
                 <img src="/github-mark-white.svg" alt="GitHub Logo" width="20" height="20" />
                 GitHub Repository
             </a>
+            <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Privacy Statement
+            </a>
         </div>
     );
 }
