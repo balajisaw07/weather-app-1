@@ -37,12 +37,13 @@
     flex-grow: 1;
 
     .login-btn, .register-btn {
-      padding: 0.5rem 1rem;
-      margin: 0.2rem 0.5rem;
+      padding: 0.6rem;
+      margin: 0.2rem;
       border: none;
       border-radius: 0.3rem;
       background-color: $day-group-bg;
       color: $common-text-color;
+      white-space: nowrap;
       cursor: pointer;
 
       &:hover {

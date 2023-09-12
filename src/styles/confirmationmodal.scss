@@ -1,0 +1,22 @@
+@import 'variables.scss';
+@import 'errormodal.scss';
+
+.confirmation-modal {
+    @extend .error-modal;
+}
+
+.confirmation-modal-content {
+    @extend .error-modal-content;
+}
+
+.confirmation-modal-close {
+    @extend .error-modal-close;
+}
+
+.yes-button, .no-button {
+    margin-right: 10px;
+}
+
+.no-button {
+    margin-left: 10px;
+}

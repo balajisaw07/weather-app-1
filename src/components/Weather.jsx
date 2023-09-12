@@ -1,17 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import '../styles/weather.scss';
 import SearchBar from './SearchBar';
+import { UserDataContext } from '../contexts/UserDataContext';
 
-function Weather() {
+function Weather({ selectedCity }) {
     const apiKey = process.env.REACT_APP_API_KEY;
     const [weather, setWeather] = useState(null);
     const [countries, setCountries] = useState([]);
-    const [selectedCity, setSelectedCity] = useState({ lat: 40.7128, lon: -74.0060 });
+    const { userData } = useContext(UserDataContext);
+    const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
+
+    const fetchLatLon = (cityName, countryCode) => new Promise((resolve, reject) => {
+        axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&appid=${apiKey}`)
+            .then((response) => {
+                if (response.data && response.data.length > 0) {
+                    const { lat, lon } = response.data[0];
+                    resolve({ lat, lon });
+                } else {
+                    reject(new Error('Location not found'));
+                }
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
 
     useEffect(() => {
-        setSelectedCity({ lat: 40.7128, lon: -74.0060 });
-    }, []);
+        if (userData && userData.settings
+            && userData.settings.defaultLocation && userData.settings.defaultCountry) {
+            fetchLatLon(userData.settings.defaultLocation, userData.settings.defaultCountry)
+                .then(({ lat, lon }) => {
+                    setCurrentCity({
+                        name: userData.settings.defaultLocation,
+                        country: userData.settings.defaultCountry,
+                        lat,
+                        lon,
+                    });
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch lat and lon:', error);
+                });
+        } else {
+            setCurrentCity(selectedCity || { lat: 40.7128, lon: -74.0060 });
+        }
+    }, [userData, selectedCity]);
 
     const kelvinToCelsius = (kelvin) => kelvin - 273.15;
 
@@ -39,7 +73,7 @@ function Weather() {
     };
 
     const handleCityClick = (city) => {
-        setSelectedCity({ lat: city.lat, lon: city.lon });
+        setCurrentCity({ lat: city.lat, lon: city.lon });
         setCountries([]);
     };
 
@@ -51,9 +85,9 @@ function Weather() {
     }, {});
 
     useEffect(() => {
-        if (selectedCity) {
+        if (currentCity) {
             axios
-                .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${selectedCity.lat}&lon=${selectedCity.lon}&appid=${apiKey}`)
+                .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${currentCity.lat}&lon=${currentCity.lon}&appid=${apiKey}`)
                 .then((response) => {
                     setWeather(response.data);
                 })
@@ -66,7 +100,7 @@ function Weather() {
                     );
                 });
         }
-    }, [selectedCity, apiKey]);
+    }, [currentCity, apiKey]);
 
     const groupedByDay = weather ? groupForecastsByDay(weather.list) : null;
 
@@ -159,5 +193,23 @@ function Weather() {
         </div>
     );
 }
+
+Weather.propTypes = {
+    selectedCity: PropTypes.shape({
+        name: PropTypes.string,
+        country: PropTypes.string,
+        lat: PropTypes.number,
+        lon: PropTypes.number,
+    }),
+};
+
+Weather.defaultProps = {
+    selectedCity: {
+        name: null,
+        country: null,
+        lat: 40.7128,
+        lon: -74.0060,
+    },
+};
 
 export default Weather;

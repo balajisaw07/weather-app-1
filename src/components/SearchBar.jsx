@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import '../styles/searchbar.scss';
 
 function SearchBar({
-    onSearch, countries, clearCountries, setSelectedCity,
+    onSearch, countries, clearCountries, setSelectedCity, variant,
 }) {
     const [search, setSearch] = useState('');
 
@@ -33,13 +33,23 @@ function SearchBar({
     };
 
     const handleClick = (country) => {
-        setSelectedCity({ lat: country.lat, lon: country.lon });
+        let descriptiveName = country.name;
+        if (country.name === 'Helsinki') {
+            descriptiveName = country.lat > 60.2 ? 'Northern Helsinki' : 'Southern Helsinki';
+        }
+
+        setSelectedCity({
+            name: descriptiveName,
+            country: country.country,
+            lat: country.lat,
+            lon: country.lon,
+        });
         setSearch('');
         clearCountries();
     };
 
     return (
-        <div className="searchbar-container">
+        <div className={`searchbar-container ${variant}`}>
             <input
                 type="text"
                 value={search}
@@ -48,22 +58,33 @@ function SearchBar({
             />
             {countries && (
                 <div className="search-results">
-                    {countries.map((country) => (
-                        <div
-                            key={`${country.lat},${country.lon}`}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => handleClick(country)}
-                            onKeyPress={() => handleClick(country)}
-                        >
-                            {`${country.name}, ${country.country}${country.state ? `, ${country.state}` : ''}`}
-                        </div>
-                    ))}
+                    {countries.map((country) => {
+                        let descriptiveName = country.name;
+                        if (country.name === 'Helsinki') {
+                            descriptiveName = country.lat > 60.2 ? 'Northern Helsinki' : 'Southern Helsinki';
+                        }
+                        return (
+                            <div
+                                key={`${country.lat},${country.lon}`}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => handleClick(country)}
+                                onKeyPress={() => handleClick(country)}
+                            >
+                                {`${descriptiveName}, ${country.country}`}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
+
         </div>
     );
 }
+
+SearchBar.defaultProps = {
+    variant: '',
+};
 
 SearchBar.propTypes = {
     onSearch: PropTypes.func.isRequired,
@@ -76,6 +97,7 @@ SearchBar.propTypes = {
     ).isRequired,
     clearCountries: PropTypes.func.isRequired,
     setSelectedCity: PropTypes.func.isRequired,
+    variant: PropTypes.string,
 };
 
 export default SearchBar;

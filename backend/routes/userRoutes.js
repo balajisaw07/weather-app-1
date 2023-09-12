@@ -62,18 +62,50 @@ router.post('/login', async (req, res) => {
 
 router.get('/dashboard', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await User.findById(req.user.id).select('-password').lean();
         return res.json({
             message: 'This is a protected route',
             user: {
                 id: user._id,
                 username: user.username,
                 email: user.email,
+                settings: user.settings,
             },
         });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update user profile
+router.put('/update-profile', auth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { selectedCity } = req.body;
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (!user.settings) {
+            user.settings = {};
+        }
+        if (selectedCity) {
+            user.settings.defaultLocation = selectedCity.name;
+            user.settings.defaultCountry = selectedCity.country;
+        } else {
+            user.settings.defaultLocation = null;
+            user.settings.defaultCountry = null;
+        }
+
+        await user.save();
+
+        return res.status(200).json({ message: 'Profile updated successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error' });
     }
 });
 
