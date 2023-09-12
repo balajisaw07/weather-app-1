@@ -5,8 +5,6 @@ import '../styles/weather.scss';
 import SearchBar from './SearchBar';
 import { UserDataContext } from '../contexts/UserDataContext';
 
-console.log('Weather component rendered');
-
 function Weather({ selectedCity }) {
     const apiKey = process.env.REACT_APP_API_KEY;
     const [weather, setWeather] = useState(null);
@@ -49,15 +47,11 @@ function Weather({ selectedCity }) {
         }
     }, [userData, selectedCity]);
 
-    console.log('Weather selectedCity:', selectedCity);
-
     const kelvinToCelsius = (kelvin) => kelvin - 273.15;
 
     const clearCountries = () => {
         setCountries([]);
     };
-
-    console.log('Initial userData in Weather:', userData);
 
     const getDayOfWeek = (date) => {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

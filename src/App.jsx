@@ -31,7 +31,6 @@ function App() {
     }, []);
 
     useEffect(() => {
-        console.log('App.jsx userData:', userData);
     }, [userData]);
 
     return (
