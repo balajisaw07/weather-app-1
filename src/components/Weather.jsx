@@ -12,11 +12,11 @@ function Weather({ selectedCity }) {
     const [flagURL, setFlagURL] = useState('');
     const { userData } = useContext(UserDataContext);
     const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
+    const [timezoneOffset, setTimezoneOffset] = useState(0); // Added this line
 
     const getCountryFlagURL = async (countryCode) => {
         try {
             const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-            console.log('API Response:', response.data); // Log the whole response to see its structure
             if (response.data && response.data[0].flags) {
                 return response.data[0].flags.png || response.data[0].flags.svg;
             }
@@ -34,7 +34,6 @@ function Weather({ selectedCity }) {
                 const flag = await getCountryFlagURL(weather.city.country);
                 setFlagURL(flag);
             };
-
             fetchFlag();
         }
     }, [weather]);
@@ -110,12 +109,19 @@ function Weather({ selectedCity }) {
         return acc;
     }, {});
 
+    const getLocalTime = (utcSeconds) => { // Added this function
+        const d = new Date(0); // The 0 sets the date to the epoch
+        d.setUTCSeconds(utcSeconds + timezoneOffset);
+        return d;
+    };
+
     useEffect(() => {
         if (currentCity) {
             axios
                 .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${currentCity.lat}&lon=${currentCity.lon}&appid=${apiKey}`)
                 .then((response) => {
                     setWeather(response.data);
+                    setTimezoneOffset(response.data.city.timezone); // Added this line
                 })
                 .catch((error) => {
                     console.error(
@@ -152,14 +158,14 @@ function Weather({ selectedCity }) {
                     {Object.keys(groupedByDay).map((day, index) => {
                         const isHeroDay = index === 0;
                         const dayGroup = groupedByDay[day].filter((forecast) => {
-                            const forecastDate = new Date(forecast.dt * 1000);
+                            const forecastDate = getLocalTime(forecast.dt); // Updated this line
                             const hour = forecastDate.getUTCHours();
                             return (!isHeroDay) ? (hour >= 11 && hour <= 13) : true;
                         });
                         if (dayGroup.length === 0) {
                             return null;
                         }
-                        const currentDate = new Date(dayGroup[0].dt * 1000);
+                        const currentDate = getLocalTime(dayGroup[0].dt); // Updated this line
                         return (
                             <div className={`day-group${isHeroDay ? ' hero-day-group' : ''}`} key={day}>
                                 <div className="day-title">
@@ -172,7 +178,7 @@ function Weather({ selectedCity }) {
                                 <div className={isHeroDay ? 'hero-day-container-wrapper' : ''}>
                                     {dayGroup.map((forecast, forecastIndex) => {
                                         const isCurrentDay = isHeroDay && forecastIndex === 0;
-                                        const forecastDate = new Date(forecast.dt * 1000);
+                                        const forecastDate = getLocalTime(forecast.dt);
                                         const timeString = forecastDate.toLocaleTimeString();
                                         const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
                                         return (
