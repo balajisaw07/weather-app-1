@@ -9,13 +9,35 @@ function Weather({ selectedCity }) {
     const apiKey = process.env.REACT_APP_API_KEY;
     const [weather, setWeather] = useState(null);
     const [countries, setCountries] = useState([]);
+    const [flagURL, setFlagURL] = useState('');
     const { userData } = useContext(UserDataContext);
     const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
 
-    const countryCodeToFlag = (countryCode) => {
-        const offset = 127397;
-        return countryCode.toUpperCase().replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + offset));
+    const getCountryFlagURL = async (countryCode) => {
+        try {
+            const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
+            console.log('API Response:', response.data); // Log the whole response to see its structure
+            if (response.data && response.data[0].flags) {
+                return response.data[0].flags.png || response.data[0].flags.svg;
+            }
+            console.warn('Flag data not available');
+            return '';
+        } catch (error) {
+            console.error('Failed to fetch country flag:', error);
+            return '';
+        }
     };
+
+    useEffect(() => {
+        if (weather) {
+            const fetchFlag = async () => {
+                const flag = await getCountryFlagURL(weather.city.country);
+                setFlagURL(flag);
+            };
+
+            fetchFlag();
+        }
+    }, [weather]);
 
     const fetchLatLon = (cityName, countryCode) => new Promise((resolve, reject) => {
         axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&appid=${apiKey}`)
@@ -68,7 +90,6 @@ function Weather({ selectedCity }) {
             fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     setCountries(data);
                 })
                 .catch((error) => console.error(error));
@@ -126,8 +147,7 @@ function Weather({ selectedCity }) {
                         ,
                         {' '}
                         {weather.city.country}
-                        {' '}
-                        {countryCodeToFlag(weather.city.country)}
+                        <img className="country-flag" src={flagURL} alt={`Flag of ${weather.city.country}`} />
                     </h2>
                     {Object.keys(groupedByDay).map((day, index) => {
                         const isHeroDay = index === 0;
@@ -153,11 +173,10 @@ function Weather({ selectedCity }) {
                                     {dayGroup.map((forecast, forecastIndex) => {
                                         const isCurrentDay = isHeroDay && forecastIndex === 0;
                                         const forecastDate = new Date(forecast.dt * 1000);
-
                                         const timeString = forecastDate.toLocaleTimeString();
                                         const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
                                         return (
-                                            <div className={`day-container${isCurrentDay ? ' current-day' : ''}`} key={forecast.dt}>
+                                            <div className={`day-container${isCurrentDay ? ' current-day' : ' non-current-day'}`} key={forecast.dt}>
                                                 <div className="time">
                                                     {timeString}
                                                     <img

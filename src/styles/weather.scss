@@ -4,7 +4,7 @@
   text-align: center;
   margin: 0 auto;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   font-size: 1.2rem;
 
   .loading {
@@ -13,13 +13,21 @@
   }
 
   .country-list {
-  position: absolute;
-  z-index: 1000;
-}
+    position: absolute;
+    z-index: 1000;
+  }
+
+  .country-flag {
+    width: 40px;
+    height: auto;
+    vertical-align: middle;
+    margin: -6px 0.7rem 0 0.7rem;
+  }
 
   .weather-card {
     background-color: $weather-card-bg;
     padding: 1.5rem;
+    line-height: 1.2;
     border-radius: 1.2rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     color: $common-text-color;
@@ -29,7 +37,6 @@
       margin-bottom: 1rem;
       font-size: 1.8rem;
       color: $common-text-color;
-      font-family: 'Tahoma', sans-serif;
     }
   }
 
@@ -51,6 +58,16 @@
       margin-bottom: 0.5rem;
       color: $common-text-color;
     }
+  }
+
+  .hero-day-group {
+    width: 100%;
+  }
+
+  .day-group:not(.hero-day-group) {
+    width: 50%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
   }
 
   .day-container,
