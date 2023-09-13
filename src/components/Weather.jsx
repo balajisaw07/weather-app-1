@@ -11,8 +11,9 @@ function Weather({ selectedCity }) {
     const [countries, setCountries] = useState([]);
     const [flagURL, setFlagURL] = useState('');
     const { userData } = useContext(UserDataContext);
+    const [expandedDay, setExpandedDay] = useState(null);
     const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
-    const [timezoneOffset, setTimezoneOffset] = useState(0); // Added this line
+    const [timezoneOffset, setTimezoneOffset] = useState(0);
 
     const getCountryFlagURL = async (countryCode) => {
         try {
@@ -79,6 +80,14 @@ function Weather({ selectedCity }) {
         setCountries([]);
     };
 
+    const toggleExpandedDay = (day) => {
+        if (expandedDay === day) {
+            setExpandedDay(null);
+        } else {
+            setExpandedDay(day);
+        }
+    };
+
     const getDayOfWeek = (date) => {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
@@ -109,8 +118,8 @@ function Weather({ selectedCity }) {
         return acc;
     }, {});
 
-    const getLocalTime = (utcSeconds) => { // Added this function
-        const d = new Date(0); // The 0 sets the date to the epoch
+    const getLocalTime = (utcSeconds) => {
+        const d = new Date(0);
         d.setUTCSeconds(utcSeconds + timezoneOffset);
         return d;
     };
@@ -121,7 +130,7 @@ function Weather({ selectedCity }) {
                 .get(`https://api.openweathermap.org/data/2.5/forecast?lat=${currentCity.lat}&lon=${currentCity.lon}&appid=${apiKey}`)
                 .then((response) => {
                     setWeather(response.data);
-                    setTimezoneOffset(response.data.city.timezone); // Added this line
+                    setTimezoneOffset(response.data.city.timezone);
                 })
                 .catch((error) => {
                     console.error(
@@ -157,17 +166,38 @@ function Weather({ selectedCity }) {
                     </h2>
                     {Object.keys(groupedByDay).map((day, index) => {
                         const isHeroDay = index === 0;
+                        const isExpandedDay = expandedDay === day;
+                        let dayGroupClass = 'day-group';
+                        if (isHeroDay || isExpandedDay) {
+                            dayGroupClass += ' hero-day-group';
+                        }
+
+                        let wrapperClass = 'day-container-wrapper';
+                        if (isHeroDay || isExpandedDay) {
+                            wrapperClass += ' hero-day-container-wrapper';
+                        }
+
                         const dayGroup = groupedByDay[day].filter((forecast) => {
-                            const forecastDate = getLocalTime(forecast.dt); // Updated this line
+                            const forecastDate = new Date(forecast.dt * 1000);
                             const hour = forecastDate.getUTCHours();
-                            return (!isHeroDay) ? (hour >= 11 && hour <= 13) : true;
+                            return (isHeroDay || isExpandedDay) ? true : (hour >= 11 && hour <= 13);
                         });
                         if (dayGroup.length === 0) {
                             return null;
                         }
-                        const currentDate = getLocalTime(dayGroup[0].dt); // Updated this line
+                        if (!isHeroDay) {
+                            dayGroupClass += ' clickable';
+                        }
+                        const currentDate = new Date(dayGroup[0].dt * 1000);
                         return (
-                            <div className={`day-group${isHeroDay ? ' hero-day-group' : ''}`} key={day}>
+                            <div
+                                className={dayGroupClass}
+                                key={day}
+                                onClick={() => { if (!isHeroDay) toggleExpandedDay(day); }}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && !isHeroDay) toggleExpandedDay(day); }}
+                            >
                                 <div className="day-title">
                                     {day}
                                     {' '}
@@ -175,14 +205,18 @@ function Weather({ selectedCity }) {
                                     {currentDate.toLocaleDateString()}
                                     )
                                 </div>
-                                <div className={isHeroDay ? 'hero-day-container-wrapper' : ''}>
+                                <div className={wrapperClass}>
                                     {dayGroup.map((forecast, forecastIndex) => {
                                         const isCurrentDay = isHeroDay && forecastIndex === 0;
+                                        let containerClass = isCurrentDay ? ' current-day' : ' non-current-day';
+                                        if (isExpandedDay) {
+                                            containerClass = ' current-day';
+                                        }
                                         const forecastDate = getLocalTime(forecast.dt);
                                         const timeString = forecastDate.toLocaleTimeString();
                                         const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
                                         return (
-                                            <div className={`day-container${isCurrentDay ? ' current-day' : ' non-current-day'}`} key={forecast.dt}>
+                                            <div className={`day-container${containerClass}`} key={forecast.dt}>
                                                 <div className="time">
                                                     {timeString}
                                                     <img

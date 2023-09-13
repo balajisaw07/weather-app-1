@@ -7,6 +7,24 @@
   max-width: 1200px;
   font-size: 1.2rem;
 
+  .expanded-day-group {
+    .day-container {
+        display: inline-block;
+        width: auto;
+        margin-right: 16px;
+    }
+    .day-container-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+  .clickable {
+    cursor: pointer;
+  }
+
+
+
   .loading {
     color: $common-text-color;
     font-size: 1.5rem;
@@ -136,6 +154,20 @@
       &.hidden {
         display: none;
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .day-group:not(.hero-day-group),
+    .hero-day-group {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .day-group:not(.hero-day-group),
+    .hero-day-group {
+      width: 100%;
     }
   }
 }
