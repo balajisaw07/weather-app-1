@@ -185,9 +185,6 @@ function Weather({ selectedCity }) {
                         if (dayGroup.length === 0) {
                             return null;
                         }
-                        if (!isHeroDay) {
-                            dayGroupClass += ' clickable';
-                        }
                         const currentDate = new Date(dayGroup[0].dt * 1000);
                         return (
                             <div
