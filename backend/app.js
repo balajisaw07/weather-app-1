@@ -35,7 +35,7 @@ app.use('/user', userRoutes);
 // Error Handling Middleware
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const BACKEND_PORT = process.env.BACKEND_PORT || 4000;
+app.listen(BACKEND_PORT, () => {
+    console.log(`Server running on port ${BACKEND_PORT}`);
 });

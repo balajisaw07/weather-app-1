@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import '../styles/weather.scss';
 import SearchBar from './SearchBar';
 import { UserDataContext } from '../contexts/UserDataContext';
+import { getCountryFlagURL, fetchLatLon, groupForecastsByDay } from './services/api';
+import DayGroup from './DayGroup';
 
 function Weather({ selectedCity }) {
     const apiKey = process.env.REACT_APP_API_KEY;
@@ -15,20 +17,6 @@ function Weather({ selectedCity }) {
     const [currentCity, setCurrentCity] = useState(selectedCity || { lat: 40.7128, lon: -74.0060 });
     const [timezoneOffset, setTimezoneOffset] = useState(0);
 
-    const getCountryFlagURL = async (countryCode) => {
-        try {
-            const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-            if (response.data && response.data[0].flags) {
-                return response.data[0].flags.png || response.data[0].flags.svg;
-            }
-            console.warn('Flag data not available');
-            return '';
-        } catch (error) {
-            console.error('Failed to fetch country flag:', error);
-            return '';
-        }
-    };
-
     useEffect(() => {
         if (weather) {
             const fetchFlag = async () => {
@@ -39,25 +27,12 @@ function Weather({ selectedCity }) {
         }
     }, [weather]);
 
-    const fetchLatLon = (cityName, countryCode) => new Promise((resolve, reject) => {
-        axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&appid=${apiKey}`)
-            .then((response) => {
-                if (response.data && response.data.length > 0) {
-                    const { lat, lon } = response.data[0];
-                    resolve({ lat, lon });
-                } else {
-                    reject(new Error('Location not found'));
-                }
-            })
-            .catch((error) => {
-                reject(error);
-            });
-    });
-
     useEffect(() => {
-        if (userData && userData.settings
-            && userData.settings.defaultLocation && userData.settings.defaultCountry) {
-            fetchLatLon(userData.settings.defaultLocation, userData.settings.defaultCountry)
+        if (userData
+            && userData.settings
+            && userData.settings.defaultLocation
+            && userData.settings.defaultCountry) {
+            fetchLatLon(userData.settings.defaultLocation, userData.settings.defaultCountry, apiKey)
                 .then(({ lat, lon }) => {
                     setCurrentCity({
                         name: userData.settings.defaultLocation,
@@ -74,8 +49,6 @@ function Weather({ selectedCity }) {
         }
     }, [userData, selectedCity]);
 
-    const kelvinToCelsius = (kelvin) => kelvin - 273.15;
-
     const clearCountries = () => {
         setCountries([]);
     };
@@ -86,11 +59,6 @@ function Weather({ selectedCity }) {
         } else {
             setExpandedDay(day);
         }
-    };
-
-    const getDayOfWeek = (date) => {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return days[date.getDay()];
     };
 
     const handleSearch = (searchTerm) => {
@@ -111,19 +79,6 @@ function Weather({ selectedCity }) {
         setCountries([]);
     };
 
-    const groupForecastsByDay = (list) => list.reduce((acc, forecast) => {
-        const day = getDayOfWeek(new Date(forecast.dt * 1000));
-        if (!acc[day]) acc[day] = [];
-        acc[day].push(forecast);
-        return acc;
-    }, {});
-
-    const getLocalTime = (utcSeconds) => {
-        const d = new Date(0);
-        d.setUTCSeconds(utcSeconds + timezoneOffset);
-        return d;
-    };
-
     useEffect(() => {
         if (currentCity) {
             axios
@@ -133,12 +88,7 @@ function Weather({ selectedCity }) {
                     setTimezoneOffset(response.data.city.timezone);
                 })
                 .catch((error) => {
-                    console.error(
-                        'Error fetching weather data: ',
-                        error.response
-                            ? error.response.data
-                            : error,
-                    );
+                    console.error('Error fetching weather data: ', error.response ? error.response.data : error);
                 });
         }
     }, [currentCity, apiKey]);
@@ -167,90 +117,27 @@ function Weather({ selectedCity }) {
                     {Object.keys(groupedByDay).map((day, index) => {
                         const isHeroDay = index === 0;
                         const isExpandedDay = expandedDay === day;
-                        let dayGroupClass = 'day-group';
-                        if (isHeroDay || isExpandedDay) {
-                            dayGroupClass += ' hero-day-group';
-                        }
-
-                        let wrapperClass = 'day-container-wrapper';
-                        if (isHeroDay || isExpandedDay) {
-                            wrapperClass += ' hero-day-container-wrapper';
-                        }
-
                         const dayGroup = groupedByDay[day].filter((forecast) => {
                             const forecastDate = new Date(forecast.dt * 1000);
-                            const hour = forecastDate.getUTCHours();
-                            return (isHeroDay || isExpandedDay) ? true : (hour >= 11 && hour <= 13);
+                            const localHour = (
+                                forecastDate.getUTCHours() + (timezoneOffset / 3600)) % 24;
+
+                            return (isHeroDay || isExpandedDay)
+                                ? true : (localHour >= 11 && localHour <= 13);
                         });
                         if (dayGroup.length === 0) {
                             return null;
                         }
-                        const currentDate = new Date(dayGroup[0].dt * 1000);
                         return (
-                            <div
-                                className={dayGroupClass}
+                            <DayGroup
                                 key={day}
-                                onClick={() => { if (!isHeroDay) toggleExpandedDay(day); }}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => { if (e.key === 'Enter' && !isHeroDay) toggleExpandedDay(day); }}
-                            >
-                                <div className="day-title">
-                                    {day}
-                                    {' '}
-                                    (
-                                    {currentDate.toLocaleDateString()}
-                                    )
-                                </div>
-                                <div className={wrapperClass}>
-                                    {dayGroup.map((forecast, forecastIndex) => {
-                                        const isCurrentDay = isHeroDay && forecastIndex === 0;
-                                        let containerClass = isCurrentDay ? ' current-day' : ' non-current-day';
-                                        if (isExpandedDay) {
-                                            containerClass = ' current-day';
-                                        }
-                                        const forecastDate = getLocalTime(forecast.dt);
-                                        const timeString = forecastDate.toLocaleTimeString();
-                                        const weatherIconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
-                                        return (
-                                            <div className={`day-container${containerClass}`} key={forecast.dt}>
-                                                <div className="time">
-                                                    {timeString}
-                                                    <img
-                                                        src={weatherIconUrl}
-                                                        alt={forecast.weather[0].description}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <strong>Temperature:</strong>
-                                                    {' '}
-                                                    {kelvinToCelsius(forecast.main.temp).toFixed(2)}
-                                                    {' '}
-                                                    &#8451;
-                                                </div>
-                                                <div>
-                                                    <strong>Description:</strong>
-                                                    {' '}
-                                                    {forecast.weather[0].description}
-                                                </div>
-                                                <div>
-                                                    <strong>Wind Speed:</strong>
-                                                    {' '}
-                                                    {forecast.wind.speed}
-                                                    {' '}
-                                                    m/s
-                                                </div>
-                                                <div>
-                                                    <strong>Humidity:</strong>
-                                                    {' '}
-                                                    {forecast.main.humidity}
-                                                    %
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                                day={day}
+                                index={index}
+                                dayGroup={dayGroup}
+                                expandedDay={expandedDay}
+                                toggleExpandedDay={toggleExpandedDay}
+                                timezoneOffset={timezoneOffset}
+                            />
                         );
                     })}
                 </div>
