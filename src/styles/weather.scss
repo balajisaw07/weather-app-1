@@ -82,6 +82,11 @@
     width: 100%;
   }
 
+.day-group:not(.hero-day-group):hover {
+    cursor: pointer;
+    background-color: lighten($day-group-bg, 10%);
+}
+
   .day-group:not(.hero-day-group) {
     width: 50%;
     margin: 0 auto;
