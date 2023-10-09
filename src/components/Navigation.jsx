@@ -27,7 +27,7 @@ function Navigation() {
     };
 
     return (
-        <div className="navigation">
+        <div className="navigation" data-testid="navigation-component">
             <div className="logo">
                 <Link to="/">
                     <img src="/sun.png" alt="Weather App Logo" className="logo-img" />

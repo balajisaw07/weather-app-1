@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import '../styles/weather.scss';
+import fetch from 'cross-fetch';
 import SearchBar from './SearchBar';
 import { UserDataContext } from '../contexts/UserDataContext';
 import { getCountryFlagURL, fetchLatLon, groupForecastsByDay } from './services/api';
@@ -28,26 +29,26 @@ function Weather({ selectedCity }) {
     }, [weather]);
 
     useEffect(() => {
-        if (userData
-            && userData.settings
-            && userData.settings.defaultLocation
-            && userData.settings.defaultCountry) {
-            fetchLatLon(userData.settings.defaultLocation, userData.settings.defaultCountry, apiKey)
-                .then(({ lat, lon }) => {
-                    setCurrentCity({
-                        name: userData.settings.defaultLocation,
-                        country: userData.settings.defaultCountry,
-                        lat,
-                        lon,
+        if (userData && userData.settings) {
+            const { defaultLocation, defaultCountry } = userData.settings;
+            if (defaultLocation && defaultCountry) {
+                fetchLatLon(defaultLocation, defaultCountry, apiKey)
+                    .then(({ lat, lon }) => {
+                        setCurrentCity({
+                            name: defaultLocation,
+                            country: defaultCountry,
+                            lat,
+                            lon,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Failed to fetch lat and lon:', error);
                     });
-                })
-                .catch((error) => {
-                    console.error('Failed to fetch lat and lon:', error);
-                });
+            }
         } else {
             setCurrentCity(selectedCity || { lat: 40.7128, lon: -74.0060 });
         }
-    }, [userData, selectedCity]);
+    }, [userData, selectedCity, apiKey]);
 
     const clearCountries = () => {
         setCountries([]);
@@ -88,7 +89,7 @@ function Weather({ selectedCity }) {
                     setTimezoneOffset(response.data.city.timezone);
                 })
                 .catch((error) => {
-                    console.error('Error fetching weather data: ', error.response ? error.response.data : error);
+                    console.error('Error fetching weather data: ', error.response ? error.response : error);
                 });
         }
     }, [currentCity, apiKey]);

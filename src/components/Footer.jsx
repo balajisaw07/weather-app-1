@@ -3,7 +3,7 @@ import '../styles/footer.scss';
 
 function Footer() {
     return (
-        <div className="footer-container">
+        <div className="footer-container" data-testid="footer-component">
             <a href="https://davittportfolio.com/" target="_blank" rel="noopener noreferrer">
                 <img src="/profile.png" alt="Portfolio Logo" width="20" height="20" />
                 Developer&apos;s Portfolio

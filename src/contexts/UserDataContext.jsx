@@ -4,7 +4,16 @@ import React, {
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-export const UserDataContext = React.createContext();
+export const UserDataContext = React.createContext({
+    userData: {
+        settings: {
+            defaultLocation: null,
+            defaultCountry: null,
+        },
+    },
+    setUserData: () => { },
+    fetchUserData: () => { },
+});
 
 export function UserDataProvider({ children }) {
     const [userData, setUserData] = useState(null);
@@ -19,7 +28,7 @@ export function UserDataProvider({ children }) {
             });
             setUserData(res.data.user);
         } catch (err) {
-            console.error(err.response.data);
+            console.error(err.response ? err.response.data : err.message);
         }
     };
 
