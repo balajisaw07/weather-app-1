@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AppRouter from './AppRouter';
 import Navigation from './components/Navigation';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 import './styles/global.scss';
 import { UserDataProvider } from './contexts/UserDataContext';
 
@@ -19,7 +19,11 @@ function App() {
             });
             setUserData(res.data.user);
         } catch (err) {
-            console.error(err.response.data);
+            console.error(err.response?.data || 'Error fetching user data');
+            // If unauthorized, clear token
+            if (err.response?.status === 401) {
+                localStorage.removeItem('token');
+            }
         }
     };
 
@@ -29,9 +33,6 @@ function App() {
             fetchUserData();
         }
     }, []);
-
-    useEffect(() => {
-    }, [userData]);
 
     return (
         <UserDataProvider
@@ -45,7 +46,7 @@ function App() {
                         <Navigation userData={userData} />
                     </AppRouter>
                 </div>
-                <Footer />
+
             </div>
         </UserDataProvider>
     );
